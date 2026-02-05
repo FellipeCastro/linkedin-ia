@@ -1,34 +1,36 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { QueryClientsProvider } from "@/providers/query-clients";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Linkedin IA - Gerador de Fotos Profissionais",
-  description: "Gerador de fotos profissionais para LinkedIn usando inteligência artificial. Crie uma foto de perfil impressionante e destaque-se na rede profissional.",
+    title: "Linkedin IA - Gerador de Fotos Profissionais",
+    description:
+        "Gerador de fotos profissionais para LinkedIn usando inteligência artificial. Crie uma foto de perfil impressionante e destaque-se na rede profissional.",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="pt-br">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+    return (
+        <html lang="pt-br">
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            >
+                <QueryClientsProvider>{children}</QueryClientsProvider>
+            </body>
+        </html>
+    );
 }

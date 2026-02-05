@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useMutation } from "@tanstack/react-query";
+import { generateProfessionalPhoto } from "@/lib/api/analyze";
 
 interface UploadPhotoProps {
     onPhotoSelected: (photo: string) => void;
@@ -20,6 +22,18 @@ export function UploadPhoto({
     const [fileName, setFileName] = useState<string>("");
     const [fileSize, setFileSize] = useState<number>(0);
     const [fileType, setFileType] = useState<string>("");
+
+    const generateMutation = useMutation({
+        mutationFn: generateProfessionalPhoto,
+        onSuccess: (response) => {
+            if (response.data?.generatedImage) {
+                onContinue(response.data?.generatedImage);
+            }
+        },
+        onError: (error: Error) => {
+            console.error("Erro na Mutation:", error);
+        }
+    });
 
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -47,8 +61,19 @@ export function UploadPhoto({
         setIsDraggin(false);
     };
 
-    const handleGeneratePhoto = () => {
-        console.log("Gerar foto profissional!");
+    const handleGeneratePhoto = async () => {
+        if (!selectedPhoto) return;
+
+        try {
+            await generateMutation.mutateAsync({
+                imageUrl: selectedPhoto,
+                fileName,
+                fileType,
+                fileSize
+            });
+        } catch(error) {
+            console.error("Erro ao gerar foto profissional:", error);
+        }
     };
 
     const handleRemoveFile = () => {
