@@ -18,24 +18,61 @@ export function UploadPhoto({
 }: UploadPhotoProps) {
     const [isDraggin, setIsDraggin] = useState(false);
     const [fileName, setFileName] = useState<string>("");
-    const [fileSize, setFileSize] = useState<string>("");
+    const [fileSize, setFileSize] = useState<number>(0);
     const [fileType, setFileType] = useState<string>("");
 
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         const file = event.dataTransfer.files?.[0];
+
+        if (file && file.type.startsWith("image/")) {
+            setFileName(file.name);
+            setFileSize(file.size);
+            setFileType(file.type);
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                onPhotoSelected(event.target?.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {};
-    const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {};
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setIsDraggin(true);
+    };
+    const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setIsDraggin(false);
+    };
 
     const handleGeneratePhoto = () => {
         console.log("Gerar foto profissional!");
     };
 
-    const handleRemoveFile = () => {};
+    const handleRemoveFile = () => {
+        setFileName("");
+        setFileSize(0);
+        setFileType("");
+        onPhotoSelected("");
+    };
 
-    const handleFileSelect = () => {};
+    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        if (file && file.type.startsWith("image/")) {
+            setFileName(file.name);
+            setFileSize(file.size);
+            setFileType(file.type);
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                onPhotoSelected(event.target?.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -73,13 +110,13 @@ export function UploadPhoto({
                     </div>
                 ) : (
                     <div className="flex flex-col items-center gap-4">
-                        <div className="relative w48 h-48 rounded-xl overflow-hidden">
+                        <div className="relative w-48 h-48 rounded-xl overflow-hidden">
                             {selectedPhoto && (
                                 <Image
                                     src={selectedPhoto}
                                     alt="Preview da foto"
                                     fill
-                                    className="object-cover"
+                                    className="object-cover w-full h-full z-0"
                                 />
                             )}
                         </div>
@@ -88,7 +125,7 @@ export function UploadPhoto({
                                 e.stopPropagation();
                                 handleRemoveFile();
                             }}
-                            className="absolute top-4 right-4 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                            className="absolute z-20 top-4 right-4 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors cursor-pointer p-1"
                         >
                             <X className="h-5 w-5 text-gray-600" />
                         </button>
@@ -99,14 +136,14 @@ export function UploadPhoto({
                     type="file"
                     accept="image/png,image/jpeg,image/jpg,image/webp"
                     onChange={handleFileSelect}
-                    className="hidden"
+                    className="bg-red-50 w-full h-full absolute inset-0 cursor-pointer opacity-0 z-0"
                 />
             </div>
 
             {selectedPhoto && (
                 <Button
                     onClick={handleGeneratePhoto}
-                    className="w-full h-12 text-base font-semibold"
+                    className="w-full h-12 text-base font-semibold cursor-pointer"
                     size="lg"
                 >
                     Gerar foto profissional
