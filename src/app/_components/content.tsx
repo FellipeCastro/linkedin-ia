@@ -4,10 +4,14 @@ import { useState } from "react";
 import { Header } from "./header";
 import { Hero } from "./hero";
 import { UploadPhoto } from "./upload-photo";
+import { ResultView } from "./result-view";
+
+type Step = "home" | "result";
 
 export function HomeContent() {
     const [selectedPhoto, setSelectedPhoto] = useState<string | null>("");
     const [generatedPhoto, setGeneratedPhoto] = useState<string | null>("");
+    const [step, setStep] = useState<Step>("home");
 
     const handlePhotoSelected = (photo: string) => {
         setSelectedPhoto(photo || null);
@@ -15,12 +19,27 @@ export function HomeContent() {
 
     const handleContinue = (url: string) => {
         setGeneratedPhoto(url || null);
+        setStep("result");
     };
 
     const handleStartOver = () => {
         setSelectedPhoto(null);
         setGeneratedPhoto(null);
+        setStep("home");
     };
+
+    if (step === "result" && selectedPhoto) {
+        return (
+            <>
+                <Header />
+                <ResultView
+                    selectedPhoto={selectedPhoto}
+                    generatedPhoto={generatedPhoto!}
+                    onStartOver={handleStartOver}
+                />
+            </>
+        );
+    }
 
     return (
         <>

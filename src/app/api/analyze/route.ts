@@ -32,14 +32,33 @@ export async function POST(request: NextRequest) {
 
         const formData = new FormData();
         formData.append("data", blob, fileName);
+
+        // const n8nWebhookUrl = "https://fellipecastro.app.n8n.cloud/webhook-test/99a755a2-4b11-40df-88f8-391906b6cf02";
+        // const n8nResponse = await fetch(n8nWebhookUrl, {
+        //     method: "POST",
+        //     body: formData,
+        // });
+
+        // if (!n8nResponse.ok) {
+        //     console.error("Erro ao enviar para n8n:", await n8nResponse.text());
+        //     return NextResponse.json(
+        //         {
+        //             success: false,
+        //             error: "Ocorreu um erro ao processar a imagem. Por favor, tente novamente.",
+        //         },
+        //         { status: 400 },
+        //     );
+        // }
+
+        // const response = await n8nResponse.json();
         
         return NextResponse.json(
             {
                 success: true,
                 message: "Imagem processada com sucesso.",
                 data: {
-                    originalImage: "",
-                    generatedImage: "",
+                    originalImage: "http://localhost:3000/_next/image?url=%2Ffoto-2.jpg&w=1920&q=75",
+                    generatedImage: "http://localhost:3000/_next/image?url=%2Ffoto-2.jpg&w=1920&q=75",
                     fileName,
                     fileType,
                     fileSize,
